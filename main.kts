@@ -3,14 +3,91 @@
 println("UW Homework: Simple Kotlin")
 
 // write a "whenFn" that takes an arg of type "Any" and returns a String
+fun whenFn(input: Any): String {
+    when (input) {
+        "Hello" -> return "world"
+        is String -> return "Say what?"
+        0 -> return "zero"
+        1 -> return "one"
+        in 2..10 -> return "low number"
+        is Int -> return "a number"
+        else -> return "I don't understand"
+    }
+}
 
 // write an "add" function that takes two Ints, returns an Int, and adds the values
+fun add(n1:Int, n2:Int): Int {
+    return n1+n2
+}
+
 // write a "sub" function that takes two Ints, returns an Int, and subtracts the values
+fun sub(n1:Int, n2:Int): Int {
+    return n1-n2
+}
+
 // write a "mathOp" function that takes two Ints and a function (that takes two Ints and returns an Int), returns an Int, and applies the passed-in-function to the arguments
+fun mathOp(n1:Int, n2:Int, func:(Int,Int)->Int): Int {
+    return func(n1,n2)
+}
 
 // write a class "Person" with first name, last name and age
+class Person(var firstName: String, var lastName: String, var age: Int) {
+    // properties, constructor, equals, hashcode, debugString property all needed
+    public val debugString: String
+        get() = "[Person firstName:${firstName} lastName:${lastName} age:${age}]"
+
+    fun equals(other: Person): Boolean {
+        return this.hashCode() == other.hashCode()
+    }
+
+    override fun hashCode(): Int {
+        return firstName.hashCode() * 17 + lastName.hashCode() * 3 + age.hashCode() * 53
+    }
+}
 
 // write a class "Money"
+data class Money(val amount: Int, val currency: String) {
+    // need to account the correct types of currencies in the spec
+    init {
+        if (amount < 0) {
+            throw Exception("Amount given was less than 0")
+        }
+
+        if (!currency.equals("USD") && !currency.equals("GBP") && !currency.equals("EUR") && !currency.equals("CAN")) {
+            throw Exception("Cannot recognize given currency")
+        }
+    }
+
+    fun convert(type: String): Money {
+        // 10USD -> 5GBP
+        // 10USD -> 15EUR
+        // 12USD -> 15CAN
+        if (this.currency.equals(type)) {
+            return this
+        } else {
+            var amt = 0
+            when (type) {
+                "USD" -> when(this.currency) {
+                    "GBP" -> amt = 10
+                    "EUR" -> amt = 10
+                    "CAN" -> amt = 12
+                }
+                "GBP" -> amt = 5
+                "EUR" -> amt = 15
+                "CAN" -> amt = 15
+            }
+            return Money(amt,type)
+        }
+    }
+
+    operator fun plus(other: Money): Money {
+        if (this.currency != other.currency) {
+            return Money(this.amount + other.convert(this.currency).amount, this.currency)
+        } else {
+            return Money(this.amount + other.amount, this.currency)
+        }
+    }
+}
 
 // ============ DO NOT EDIT BELOW THIS LINE =============
 
